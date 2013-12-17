@@ -1,0 +1,37 @@
+<h1>Blog Content Controller Index</h1>
+    <p>One controller to manage view of all blog posts.</p>
+    <a href='<?=create_url("content")?>'>view all content</a>.
+    
+    <h2>All blogs</h2>
+    <?php if($contents != null):?>
+      
+      <?php foreach($content as $val):?>
+      <p><h3><?=$val['title']?></h3>
+      <?=$val['content']?><br/>
+      Created by <?=$val['owner']?>: <?=$val='created'?><a href='<?create_url("content/edit/{$val['id']}")?>'>Edit</a>
+      <hr></p>
+      
+      <?php endforeach; ?>
+      
+    <?php else:?>
+      <p>No posts exists.</p>
+    <?php endif;?>
+
+    
+      <li><a href='<?=create_url('content/create')?>'>Create new content</a>
+    
+
+<!--    
+        <h1>Blog</h1>
+    <p>All blog-like list of all content with the type "post", <a href='<?=create_url("content")?>'>view all content</a>.</p>
+
+    <?php if($contents != null):?>
+      <?php foreach($contents as $val):?>
+        <h2><?=esc($val['title'])?></h2>
+        <p class='smaller-text'><em>Posted on <?=$val['created']?> by <?=$val['owner']?></em></p>
+        <p><?=$val['data']?></p>
+        <p class='smaller-text silent'><a href='<?=create_url("content/edit/{$val['id']}")?>'>edit</a></p>
+      <?php endforeach; ?>
+    <?php else:?>
+      <p>No posts exists.</p>
+    <?php endif;?> -->

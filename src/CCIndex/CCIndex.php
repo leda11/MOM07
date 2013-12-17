@@ -1,0 +1,74 @@
+<?php
+/**
+* Standard controller layout.
+*
+* @package HandyCore
+*/
+class CCIndex extends CObject implements IController {
+
+    /**
+    * Constructor
+    */
+    public function __construct() {
+    	parent::__construct();
+    } 
+	
+	/**
+       * Implementing interface IController. All controllers must have an index action.
+       */
+       public function Index() {         
+        $this->views->SetTitle('Index Controller');
+        $this->views->AddInclude(__DIR__ . '/index.tpl.php', array('menu'=>$this->Menu()));
+      }
+      
+            /**
+       * A menu that shows all available controllers/methods
+       */
+      private function Menu() {   
+        $items = array();
+        
+        foreach($this->config['controllers'] as $key => $val) {
+          if($val['enabled']) {
+            $rc = new ReflectionClass($val['class']);
+            $items[] = $key;
+            $methods = $rc->getMethods(ReflectionMethod::IS_PUBLIC);
+            foreach($methods as $method) {
+              if($method->name != '__construct' && $method->name != '__destruct' && $method->name != 'Index') {
+                $items[] = "$key/" . mb_strtolower($method->name);
+              }
+            }
+          }
+        }
+        return $items;
+      }
+      
+            /**
+       * Read and analyse all modules.
+       *
+       * @returns array with a entry for each module with the module name as the key.
+       *                Returns boolean false if $src can not be opened.
+       */
+      public function ReadAndAnalyse() {
+        $src = LYDIA_INSTALL_PATH.'/src';
+        if(!$dir = dir($src)) throw new Exception('Could not open the directory.');
+        $modules = array();
+        while (($module = $dir->read()) !== false) {
+          if(is_dir("$src/$module")) {
+            if(class_exists($module)) {
+              $rc = new ReflectionClass($module);
+              $modules[$module]['name']          = $rc->name;
+              $modules[$module]['interface']     = $rc->getInterfaceNames();
+              $modules[$module]['isController']  = $rc->implementsInterface('IController');
+              $modules[$module]['isModel']       = preg_match('/^CM[A-Z]/', $rc->name);
+              $modules[$module]['hasSQL']        = $rc->implementsInterface('IHasSQL');
+              $modules[$module]['isLydiaCore']   = in_array($rc->name, array('CLydia', 'CDatabase', 'CRequest', 'CViewContainer', 'CSession', 'CObject'));
+              $modules[$module]['isLydiaCMF']    = in_array($rc->name, array('CForm', 'CCPage', 'CCBlog', 'CMUser', 'CCUser', 'CMContent', 'CCContent', 'CFormUserLogin', 'CFormUserProfile', 'CFormUserCreate', 'CFormContent', 'CHTMLPurifier'));
+            }
+          }
+        }
+        $dir->close();
+        ksort($modules, SORT_LOCALE_STRING);
+        return $modules;
+      }
+} 
+

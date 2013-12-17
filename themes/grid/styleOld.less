@@ -1,0 +1,255 @@
+/**
+* Description: grid theme Semanntic.gs for Handy and LESSPHP
+/*
+
+/**
+* semantic.gs-------------------------------------------------------------------------
+*/
+@import url(semantic.gs/stylesheets/less/grid.less);
+
+/**
+* Settings -------------------------------------------------------------------------
+*/ 
+@bgcolor: fff;
+@headcolor:#E592B1;
+@mainbgcolor:#FBE4F0;
+@footerbgcolor:#EEDDF8;
+/**
+@bgtest: hsla(0,0%,90%,0.5);
+*/
+@color:#222;
+
+@font: 1em Verdana, Arial, Helvetica, sans-serif;
+@fontfooter: 0.8em Verdana, Arial, Helvetica, sans-serif;
+
+/* Wrap elements to site width in grid layout*/
+.wrap() {width:@total-width;margin:0 auto;.clearfix();}
+
+@magic-number:22px;
+
+/**
+* Headings -------------------------------------------------------------------------
+*/
+h1{border-bottom:5px double #ccc;padding-bottom:4px;}/* verkar inte bita ser inga linjer under h1*/
+h2{border-bottom:1px solid #ccc	;padding-bottom:4px;}
+
+/**
+ * Forms -------------------------------------------------------------------------
+ */
+input,textarea{font:inherit;}
+input[readonly]{color:#666;}
+label{font-size:smaller; color:black;}
+
+.validation-failed{border:2px solid #B25778; margin-top:0.4em;}
+.validation-message{color:#B25778;font-size:smaller;}
+
+.form-action-link{font-size:smaller;}
+
+.content-edit {
+	input[type=text]{width:37em;}
+	textarea{width:37em;height:17em;}
+}
+
+
+/** Nytt
+* Structure HTML and Body-------------------------------------------------------
+*/
+html{background-color:bgcolor;  }
+
+body{
+   background-color:bgcolor;  
+   margin:0;padding:0;
+   color:@color;
+   font: @font;
+   /*&:hover{background:#fff url(grid_12_60_20.png) repeat-y center top;}*/
+}
+/** --------------------------------------------------------------
+    * The header area. nytt
+    */
+    .tablecell() {display:table-cell;vertical-align:middle;text-align:center;}
+    #outer-wrap-header{height:@magic-number*5 ;margin-top:0;margin-bottom:@magic-number/2;}
+    #inner-wrap-header{.wrap();}
+    #header{.column(12);background-color:@headcolor}
+
+/**
+* Login menu ------------------------------------------------------------------
+*/
+#login-menu{float:right;font-size:smaller;margin-top:@magic-number/2;padding-right:10px;
+	a{text-decoration:none;}
+	a:hover{text-decoration:underline;}
+}
+
+/** updated
+* Banner -------------------------------------------------------------------------
+*/
+
+#banner {display:table;
+	margin-bottom:@magic-number*1.5;margin-top:@magic-number/2;
+	font-family:Tangerine,serif;
+	line-height:1;
+	padding-left:20px;
+	color:#fff;
+	text-shadow:#ccc 2px -2px 2px;
+	#site-title {.tablecell();font-size:4em;font-weight:bold;
+		a {text-decoration:none;}
+		a:hover {color:inherit;}
+	}
+	#site-slogan {.tablecell();font-size:1.5em;padding-left:10px;}
+}	
+    
+ /** --------------------------------------------------------------
+    * The flash area.
+    */
+    #outer-wrap-flash{}
+    #inner-wrap-flash{.wrap();height:@magic-number*3;margin-bottom:@magic-number;}
+    #flash{.column(12);/*background-color:@bgtest;*/height:100%;}
+
+/** --------------------------------------------------------------
+    * The featured area.
+    */
+    #outer-wrap-featured{}
+    #inner-wrap-featured{.wrap;height:@magic-number*4;margin-bottom:@magic-number;}
+    #featured{}
+    #featured-first,
+    #featured-middle,
+    #featured-last{.column(4);/*background-color:@bgtest*/;height:100%;}  
+    
+/** --------------------------------------------------------------
+    * The main content area.
+    */
+    #outer-wrap-main{}
+    #inner-wrap-main{.wrap;margin-bottom:@magic-number; /*background-color:@mainbgcolor;*/}
+    #main{}
+    #primary{.column(8);/*background-color:@bgtest;*/}
+    #sidebar{.column(4);/*background-color:@bgtest;*/}   
+    
+/** --------------------------------------------------------------
+    * The triptych area.
+    */
+    #outer-wrap-triptych{}
+    #inner-wrap-triptych{.wrap();height:@magic-number*5;margin-bottom:@magic-number; /*background-color:@mainbgcolor;*/}
+    #triptych-first,
+    #triptych-middle,
+    #triptych-last{.column(4);/*background-color:@bgtest*/;height:100%;}
+    
+ /** --------------------------------------------------------------
+    * The footer column area.
+    *
+    */
+    #outer-wrap-footer-column{border-top:1px solid #bbb;}
+    #inner-wrap-footer-column{.wrap();height:@magic-number*5;padding-bottom:@magic-number;background-color:@footerbgcolor;}
+    #footer{height:inherit;}
+
+    #footer-column-one,
+    #footer-column-two,
+    #footer-column-three,
+    #footer-column-four{.column(3);font-size:0.9em;margin-top:1em;height:100%;
+    /*background-color:lighten(@bgtest,10%);*/}    
+ /** --------------------------------------------------------------
+    * The footer area.
+    *
+    */
+    #outer-wrap-footer{background-color:#fff;}
+    #inner-wrap-footer{.wrap();background-color:@footerbgcolor;}
+    #footer{.column(12);font-size:0.80em;color:#666;padding-bottom:@magic-number;}
+
+    /** --------------------------------------------------------------
+    * Links
+    */
+    .hover(){text-decoration:none;color:#5C0A0A;}
+    a{color:inherit;
+      &:link{}
+      &:visited{}
+      &:hover{.hover()}
+      &:focus{.hover()}
+      &:active{}
+    }
+
+ /**
+* User feedback message wrappers.------------------------------------------------
+*/
+.error, .alert, .warning, .notice, .success, .info {
+padding: 0.8em; margin-bottom: 1em; border: 2px dotted #E592B1; }
+                                       
+.error, .alert { background:#C4528F; color: #fff;} /** #E552E0*/
+.notice, .warning { background: #CAE; color: #fff;  }
+.success { background:#E6D7EA ; color: #6D5E5E;  }
+.info { background: #DBBAE2; color: #fff;  }
+.error a, .alert a { color: #8a1f11; }
+.notice a, .warning a { color: #514721; }
+.success a { color: #264409; }
+.info a { color: #fff; border-color: #B8D8BA;}
+   
+/**
+* miscs ----------------------------------------------------------------------
+*/
+.smaller-text{font-size:smaller; font-style:italic;}
+.silent{ color: #999;}    
+    
+/**
+*Fonts -------------------------------------------------------------------------
+*/
+@import url(http://fonts.googleapis.com/css?family=UnifrakturCook:bold);
+.font1{font-family:Tangerine,serif;font-size:48px;}
+.heading {font: Verdana;font-size:48px;}
+
+/*--------------------------------------------------------------------------- */   
+
+#textInput {
+	width: 500px;	
+	height: 100px;
+}
+
+#comment{
+	background-color:#f6f6f6;
+	border:1px dotted #ccc;
+	margin-bottom:0.8em;
+	padding:0.4em;
+	font-size: 10px;
+}    
+    
+/*
+#wrap-header {}
+#wrap-main {}
+#wrap-footer{background-color:@footerbgcolor;}
+*/
+
+/*
+#header,
+#main,
+#footer {
+   margin:0 auto;
+   width:970px;   
+   padding: 1em;
+}
+
+#main,
+#footer{margin-bottom: 16px;}
+
+#header{
+	background-color:@headcolor;
+	color: @bgcolor;
+	height:80px;
+} 
+*/
+
+/* @bgcolor; #FBE4F0
+#main {background-color:@mainbgcolor;
+		min-height:300px;	}
+*/
+
+/*
+#footer{
+	background-color:@footerbgcolor;
+	font: @fontfooter;
+}
+*/
+
+
+
+
+
+
+
+
+	
