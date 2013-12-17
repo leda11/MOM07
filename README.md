@@ -1,4 +1,4 @@
-css med LESS and Gridtema Semantic.gs
+CSS with LESS, Gridtema and Semantic.gs
 ====
 
-PHPMVC mom06
+PHPMVC mom07
