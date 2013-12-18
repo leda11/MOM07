@@ -23,7 +23,7 @@
 
 
     <div class='box'>
-    <h4>Hanady CMF</h4>
+    <h4>Handy CMF</h4>
     <p>Handy Content Management Framework (CMF) modules.</p>
     <ul>
     <?php foreach($modules as $module): ?>
