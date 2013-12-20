@@ -16,12 +16,16 @@ class CCIndex extends CObject implements IController {
 	/**
        * Implementing interface IController. All controllers must have an index action.
        */
-       public function Index() {         
-        $this->views->SetTitle('Index Controller');
-        $this->views->AddInclude(__DIR__ . '/index.tpl.php', array('menu'=>$this->Menu()));
+       public function Index() { 
+       	   $modules=new CMModules();
+       	   $controllers = $modules->AvailableControllers();
+       	   $this->views->SetTitle('Index')
+       	   		->AddInclude(__DIR__ . '/index.tpl.php', array('menu'=>$this->Menu() ),'primary')
+                //->AddInclude(__DIR__ . '/index.tpl.php', array(), 'primary')
+                ->AddInclude(__DIR__ . '/sidebar.tpl.php', array('controllers'=>$controllers), 'sidebar');
       }
       
-            /**
+       /**
        * A menu that shows all available controllers/methods
        */
       private function Menu() {   
@@ -48,7 +52,7 @@ class CCIndex extends CObject implements IController {
        * @returns array with a entry for each module with the module name as the key.
        *                Returns boolean false if $src can not be opened.
        */
-      public function ReadAndAnalyse() {
+  /*    public function ReadAndAnalyse() {
         $src = LYDIA_INSTALL_PATH.'/src';
         if(!$dir = dir($src)) throw new Exception('Could not open the directory.');
         $modules = array();
@@ -70,5 +74,6 @@ class CCIndex extends CObject implements IController {
         ksort($modules, SORT_LOCALE_STRING);
         return $modules;
       }
+      */
 } 
 

@@ -46,9 +46,7 @@
           die("$e<br/>Failed to open database: " . $this->config['database'][0]['dsn']);
         }
       }
- */ 
- // ----------------------------------------------------------------------------------  
-
+ */     
        /**
        * Implementing interface IModule. Manage install/update/deinstall and equal actions.
        */
@@ -57,7 +55,7 @@
           case 'install':
             try {
               $this->db->ExecuteQuery(self::SQL('create table guestbook'));
-        	return array('success', 'The table is now created if it not existed before.');
+        	$this->session->AddMessage('notice', 'The table is now created of it not existed before.');
         	} catch(Exception$e) {
         		die("$e<br/>Failed to open database: " . $this->config['database'][0]['dsn']);
             }

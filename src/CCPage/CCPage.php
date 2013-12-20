@@ -45,7 +45,7 @@
        *
        * @returns array list of controllers (key) and an array of methods
        */
-      public function AvailableControllers() { 
+ /*     public function AvailableControllers() { 
         $controllers = array();
         foreach($this->config['controllers'] as $key => $val) {
           if($val['enabled']) {
@@ -64,6 +64,7 @@
         ksort($controllers, SORT_LOCALE_STRING);
         return $controllers;
       }
+      */
  //-------------------------------------------------------------------------------
      
             /**
@@ -72,7 +73,7 @@
        * @returns array with a entry for each module with the module name as the key.
        *                Returns boolean false if $src can not be opened.
        */
-      public function ReadAndAnalyse() {
+ /*     public function ReadAndAnalyse() {
         $src = LYDIA_INSTALL_PATH.'/src';
         if(!$dir = dir($src)) throw new Exception('Could not open the directory.');
         $modules = array();
@@ -95,7 +96,7 @@
         return $modules;
       }
 
-    
+ */   
 }
     
 

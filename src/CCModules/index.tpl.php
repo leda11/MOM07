@@ -2,7 +2,8 @@
 
 
     <h2>About</h2>
-    <p><strong>Module Manager</strong> displays information on modules and enable managing of all Lydia modules. 
+    <p><strong>Module Manager</strong> displays information on modules and enable managing of all 
+    Handy modules. 
     Handy is made up of modules. Each module
     has its own subdirectory in the <code>src</code>-directory.</p>
 

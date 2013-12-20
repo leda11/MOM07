@@ -1,16 +1,21 @@
     <?php
     /**
     * A guestbook controller as an example to show off some basic controller and model-stuff.
+    * METHODS
+    * Index()
+    * Handler()
+    * SQL($key=null)
+    * CreateTableInDatabase()
+    * SaveNewToDatabase($entry)
+    * DeleteAllFromDatabase()
+    * ReadAllFromDatabase()
     *
     * @package HandyCore
     */
-    class CCGuestbook extends CObject implements IController {
+    class CCGuestbook extends CObject implements IController{
 
-      private $pageTitle = 'Handy my Guestbook';
-      private $pageHeader = '<h1>Guestbook </h1><p>Hi, welcome to my gustbook.<br/>Please add your input. <p>';
-      private $pageForm ="";
-      private $pageMessages= "<h2>Messages in the guestbook</h2>";
-     
+      private $pageTitle = 'My Guestbook -in Handy MVC';// skall denna flyttas del 9 mom03
+      private $guestbookModel;
      
 //------------------------------------------------------------------------------
       /**
@@ -18,132 +23,109 @@
        */
       public function __construct() {
         parent::__construct();
+        $this->guestbookModel = new CMGuestbook();
       }
      
 //------------------------------------------------------------------------------
       /**
        * Implementing interface IController. All controllers must have an index action.
        */
-      public function Index() {   
-      	  
-      $formAction = $this->request->CreateUrl('guestbook/handler');
-      $this->pageForm = "
-      <form method='post' action='{$formAction}'>
-          <p>
-            <label>Comment: <br/>
-            <textarea name='newEntry' id='textInput' ></textarea></label>
-          </p>
-          <p>      
-            <input type='submit' name='doAdd' value='Add message' />
-            <input type='submit' name='doClear' value='Clear all messages' />
-            <input type='submit' name='doCreat' value='Skapa databasen' />
-           </p>
-         </form>
-      ";
-      
-        $this->data['title'] = $this->pageTitle;
-        $this->data['main'] = $this->pageHeader . $this->pageForm . $this->pageMessages;
-       
-        // Show added messages 
-      if(isset($_SESSION['guestbook'])) {
-      	  
-      	  foreach($_SESSION['guestbook'] as $val) {
-      	  	  $this->data['main'] .= "<div id='comment'><p>At: {$val['time']}</p><p>{$val['entry']}</p></div>\n";
-          }
+      public function Index() {
+        $this->views->SetTitle($this->pageTitle);
+        $this->views->AddInclude(__DIR__ . '/index.tpl.php', array(
+          'entries'=>$this->guestbookModel->ReadAll(),
+          'formAction'=>$this->request->CreateUrl('','handler')// ändrat från 'guestbook/handler'
+        ));
       }
-}
+ 
 //------------------------------------------------------------------------------
       /**
        * Handle posts from the form and take appropriate action.
        */
       public function Handler() {
         if(isset($_POST['doAdd'])) {
-          $this->SaveNewToDatabase(strip_tags($_POST['newEntry']));//SaveNewToDatabase() ny metod
-          //$dataposts = ReadAllFromDatabase();// ett resultset från databasen
+          $this->guestbookModel->Add(strip_tags($_POST['newEntry']));//calls ExecuteQuery
         }
-        elseif(isset($_POST['doClear'])) {
-          $this->DeleteAllFromDatabase();
-        }           
+        elseif(isset($_POST['doClear'])) { // calls ExecuteQuery
+          $this->guestbookModel->DeleteAll();
+        }        
         elseif(isset($_POST['doCreate'])) {
-          $this->CreateTableInDatabase();
+          $this->guestbookModel->Init();
         }           
-        header('Location: ' . $this->request->CreateUrl('guestbook'));
+        //header('Location: ' . $this->request->CreateUrl('guestbook')); borttaget 
+        //metod iCObject
+        $this->RedirectTo($this->request->CreateUrl($this->request->controller));
       }
+
 //------------------------------------------------------------------------------
-      
-/*      public function Add() {   
-      	    
-        if(isset($_POST['doAdd'])) {
-          $entry = strip_tags($_POST['newEntry']);
-          $time = date('r');
-          $_SESSION['guestbook'][] = array('time'=>$time, 'entry'=>$entry);
-        }
-        elseif(isset($_POST['doClear'])) {
-          unset($_SESSION['guestbook']);
-        }           
-        header('Location: ' . $this->request->CreateUrl('guestbook'));
-        exit();
-      }
- */
-//------------------------------------------------------------------------------     
-      /**
+       /** moved to CMGuestbook.php
+        * Implementing interface IHasSQL. Encapsulate all SQL used by this class.
+        *
+        * @param string $key the string that is the key of the wanted SQL-entry in the array.
+        */ 
+/*        public static function SQL($key=null) {
+         $queries = array(
+            'create table guestbook'  => "CREATE TABLE IF NOT EXISTS Guestbook (id INTEGER PRIMARY KEY, entry TEXT, created DATETIME default (datetime('now')));",
+            'insert into guestbook'   => 'INSERT INTO Guestbook (entry) VALUES (?);',
+            'select * from guestbook' => 'SELECT * FROM Guestbook ORDER BY id DESC;',
+            'delete from guestbook'   => 'DELETE FROM Guestbook;',
+         );
+         if(!isset($queries[$key])) {
+            throw new Exception("No such SQL query, key '$key' was not found.");
+          }
+          return $queries[$key];
+       }
+       */
+//------------------------------------------------------------------------------
+      /**  moved to CMGuestbook.php
        * Save a new entry to database.
        */
-      private function CreateTableInDatabase() {
+/*      private function CreateTableInDatabase() {
         try {
-          $db = new PDO($this->config['database'][0]['dsn']);
-          $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-     
-          $stmt = $db->prepare("CREATE TABLE IF NOT EXISTS Guestbook (id INTEGER PRIMARY KEY, entry TEXT, created DATETIME default (datetime('now')));");
-          $stmt->execute();
+        	$this->db->ExecuteQuery(self::SQL('create table guestbook'));
+        	$this->session->AddMessage('notice', 'The table is now created of it not existed before.');
         } catch(Exception$e) {
-          die("Failed to open database: " . $this->config['database'][0]['dsn'] . "</br>" . $e);
+          die("$e<br/>Failed to open database: " . $this->config['database'][0]['dsn']);
         }
       }
+*/
+
 //------------------------------------------------------------------------------
-       /**
-       * Save a new entry to database.
+      /**  moved to CMGuestbook.php
+       * Save a new entry to database.'INSERT INTO Guestbook (entry) VALUES (?);'
        */
-      private function SaveNewToDatabase($entry) {
-        $db = new PDO($this->config['database'][0]['dsn']);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-
-        $stmt = $db->prepare('INSERT INTO Guestbook (entry) VALUES (?);');
-        $stmt->execute(array($entry));
-        if($stmt->rowCount() != 1) {
-          die('Failed to insert new guestbook item into database.');
+/*      private function SaveNewToDatabase($entry) {
+      	  $this->db->ExecuteQuery(self::SQL('insert into guestbook'), array($entry));
+      	  $this->session->AddMessage('success', 'The message is now added to the database.');
+        if($this->db->rowCount() != 1) {
+          echo 'Failed to insert new guestbook item into database.';
         }
       }
-//------------------------------------------------------------------------------
-
-       /**
+*/      
+ 
+//------------------------------------------------------------------------------                                     
+      /**
        * Delete all entries from the database.
        */
-      private function DeleteAllFromDatabase() {
-        $db = new PDO($this->config['database'][0]['dsn']);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-
-        $stmt = $db->prepare('DELETE FROM Guestbook;');
-        $stmt->execute();
+/*      private function DeleteAllFromDatabase() {
+        //$this->db->ExecuteQuery('DELETE FROM Guestbook;');
+         $this->db->ExecuteQuery(self::SQL('delete from guestbook'));// removed return
+         $this->session->AddMessage('info', 'The database is now emptied from messages. ');
       }
+*/ 
  //------------------------------------------------------------------------------
- 
-      /**
+     /**  moved to CMGuestbook.php
        * Read all entries from the database.
        */
-      private function ReadAllFromDatabase() {
+ /*     private function ReadAllFromDatabase() {
         try {
-          $db = new PDO($this->config['database'][0]['dsn']);
-          $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-     
-          $stmt = $db->prepare('SELECT * FROM Guestbook ORDER BY id DESC;');
-          $stmt->execute();
-          $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-          return $res;
+          $this->db->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);          
+          return $this->db->ExecuteSelectQueryAndFetchAll(self::SQL('select * from guestbook'));
         } catch(Exception $e) {
-          return array();
+          return array();   
         }
       }
+*/    
     } 
     
 
