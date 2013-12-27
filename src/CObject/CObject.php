@@ -1,6 +1,6 @@
 <?php
 /**
-* Holding a instance of CHanady to enable use of $this in subclasses.
+* Holding a instance of CHandy to enable use of $this in subclasses.
 *
 * @package HandyCore
 */
@@ -9,101 +9,65 @@ class CObject {
    public $config;
    public $request;
    public $data;
+   
    public $db;
    public $views;
    public $session;
-   public $user;
-  // public $content;
+   public $user;//mom07:3
+   
+   protected $ha;
    
    /**
     * Constructor
     */
-   protected function __construct($ha=null) {//nytt konstruktorargument
+   protected function __construct($ha=null) {
    	if(!$ha) {
    	   $ha = CHandy::Instance();
    	}
+   	$this->ha 		= &$ha;//mom 07 -3
     $this->config   = &$ha->config;
     $this->request  = &$ha->request;
     $this->data     = &$ha->data;
     $this->db 		= &$ha->db;
     $this->views 	= &$ha->views;
     $this->session	= &$ha->session;
-    $this->user     = &$ha->user;//uppdaterat
-    //$this->content = &$ha->content;
+    $this->user     = &$ha->user;
   }
-  
+//-----------------------------------------------------------------------------  
 /**
-    * Redirect to another url and store the session
-    * called from CGuestbook->handler()
-    */
-    protected function RedirectTo($urlOrController=null, $method=null, $arguments=null) {//24/11 content:added arguments
-    $ha = CHandy::Instance(); 
-    if(isset($ha->config['debug']['db-num-queries']) && $ha->config['debug']['db-num-queries'] && isset($this->db)) {
-      $this->session->SetFlash('database_numQueries', $this->db->GetNumQueries());
-    }
-    if(isset($ha->config['debug']['db-queries']) && $this->config['debug']['db-queries'] && isset($this->db)) {
-      $this->session->SetFlash('database_queries', $this->db->GetQueries());
-    }
-    if(isset($ha->config['debug']['timer']) && $ha->config['debug']['timer']) {
-         $this->session->SetFlash('timer', $ha->timer);
-    }
-    $this->session->StoreInSession();
-    header('Location: ' . $this->request->CreateUrl($urlOrController, $method, $arguments));// 24/11 content: added $arguments
-  }
-//-----------------------------------------------------------------------------
-/**
-  * Redirect to a method within the current controller. Defaults to index-method. Uses RedirectTo().
-  *
-  * @param string method name the method, default is index method.
+  * Wrapper for same method in CHandy. See there for documentation.
   */
-   // changed in Content to take 2 arguments      
+    protected function RedirectTo($urlOrController=null, $method=null, $arguments=null) {//24/11 content:added arguments
+    	$this->ha->RedirectTo($urlOrController, $method, $arguments);
+    }
+   
+//-----------------------------------------------------------------------------
+/**
+  * Wrapper for same method in CHandy. See there for documentation.
+  */     
    protected function RedirectToController($method=null, $arguments=null) {
-   	   $this->RedirectTo($this->request->controller, $method, $arguments);
+   	   $this->ha->RedirectToController($method, $arguments);
   }
 //-----------------------------------------------------------------------------
-
-        /**
-         * Redirect to a controller and method. Uses RedirectTo().
-         *
-         * @param string controller name the controller or null for current controller.
-         * @param string method name the method, default is current method.
-         */
-        protected function RedirectToControllerMethod($controller=null, $method=null, $arguments=null) {
-         $controller = is_null($controller) ? $this->request->controller : null;
-         $method = is_null($method) ? $this->request->method : null;        
-         $this->RedirectTo($this->request->CreateUrl($controller, $method, $arguments));
+/**
+  * Wrapper for same method in CHandy. See there for documentation.
+  */ 
+    protected function RedirectToControllerMethod($controller=null, $method=null, $arguments=null) {
+       $this->ha->RedirectToControllerMethod($controller, $method, $arguments );
   }
  //-----------------------------------------------------------------------------
- //-----------------------------------------------------------------------------
-   /**
-         * Save a message in the session. Uses $this->session->AddMessage()
-         *
-         * @param $type string the type of message, for example: notice, info, success, warning, error.
-         * @param $message string the message.    
-         * @param $alternative string the message if the $type is set to false, defaults to null.
-         */
-//new 12/11
+/**
+  * Wrapper for same method in CHandy. See there for documentation.
+  */ 
   protected function AddMessage($type, $message, $alternative=null) {
-    if($type === false) {
-      $type = 'error';
-      $message = $alternative;
-    } else if($type === true) {
-      $type = 'success';
-    }
-    $this->session->AddMessage($type, $message);
+  	  return $this->ha->AddMessage($type, $message, $alternative); //var kommer alternative från 22/12	  
   }
 
-
  //-----------------------------------------------------------------------------
-        
-       /**
-         * Create an url. Uses $this->request->CreateUrl()
-         *
-         * @param $urlOrController string the relative url or the controller
-         * @param $method string the method to use, $url is then the controller or empty for current
-         * @param $arguments string the extra arguments to send to the method
-         */
-      protected function CreateUrl($urlOrController=null, $method=null, $arguments=null) {
-      	  $this->request->CreateUrl($urlOrController, $method, $arguments);
+/**
+  * Wrapper for same method in CHandy. See there for documentation.
+  */ 
+   protected function CreateUrl($urlOrController=null, $method=null, $arguments=null) {
+      return $this->ha->CreateUrl($urlOrController, $method, $arguments);
   }
 }

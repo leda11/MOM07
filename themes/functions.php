@@ -69,7 +69,9 @@ function base_url($url=null) {
 */
 
 function create_url($urlOrController=null, $method=null, $arguments=null) {
-    return CHandy::Instance()->request->CreateUrl($urlOrController, $method, $arguments);
+   // return CHandy::Instance()->request->CreateUrl($urlOrController, $method, $arguments);
+    return CHandy::Instance()->CreateUrl($urlOrController, $method, $arguments);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -78,11 +80,18 @@ function create_url($urlOrController=null, $method=null, $arguments=null) {
 * Prepend the theme_url, which is the url to the current theme directory.
 */
 	function theme_url($url) {
-		$ha = CHandy::Instance();
-		return "{$ha->request->base_url}themes/{$ha->config['theme']['name']}/{$url}";
+		//$ha = CHandy::Instance();
+		//return "{$ha->request->base_url}themes/{$ha->config['theme']['name']}/{$url}";
+		return create_url(CHandy::Instance()->themeUrl . "/{$url}");
 	}
 //-----------------------------------------------------------------------------  
-    /**
+// ny mom07-3
+	function theme_parent_url($url){
+		return create_url(CHandy::Instance()->themeParentUrl . "/{$url}");	
+	}
+
+//-----------------------------------------------------------------------------
+/**
     * Check if region has views. Accepts variable amount of arguments as regions.
     *
     * @param $region string the region to draw the content in.
@@ -106,6 +115,7 @@ function create_url($urlOrController=null, $method=null, $arguments=null) {
     * @param $region string the region to draw the content in.
     */
     function render_views($region='default') {
+    	//echo "region in render_views in functions.php: ". $region;
       return CHandy::Instance()->views->Render($region);
     }
     

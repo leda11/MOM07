@@ -37,14 +37,7 @@ class CRequest {
     if(substr_compare($requestUri, $scriptName, 0, strlen($scriptName))) {
       $scriptPart = dirname($scriptName);
     }
-    //$query = trim(substr($requestUri, strlen(rtrim($scriptPart, '/'))), '/');  
-    
-    
-    //NY mom03 session - query after base_url, except if optional querystring
-  /*  $pos = strpos($query, '?');// felstavat på strpos 9/11 lagt till en med MOS namn
-    if($pos){
-    	$query = substr($query, 0 , $pos);
-    }*/
+  
     // 9/11 
     // Compare REQUEST_URI and SCRIPT_NAME as long they match, leave the rest as current request.
     $i=0;
@@ -161,21 +154,5 @@ class CRequest {
     
   }
 
-//----------------------------------------------------------------------------  
-    /**
-   * Create a url in the way it should be created. (06)
-   *
-   */
-/*  public function CreateUrl($url=null) {
-    $prepend = $this->base_url;
-    if($this->cleanUrl) {
-      ;
-    } elseif ($this->querystringUrl) {
-      $prepend .= 'index.php?q=';
-    } else {
-      $prepend .= 'index.php/';
-    }
-    return $prepend . rtrim($url, '/');
-  }
-  */
+
 }

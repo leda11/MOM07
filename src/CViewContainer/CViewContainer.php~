@@ -9,6 +9,8 @@
     * SetVariable($key, $value)
     * AddInclude($file, $variables=array())
     * Render()
+    * AddStyle()
+    * RegionHasView()
     *
     * @package HandyCore
     */
@@ -40,7 +42,6 @@
         *
         * @param $value string to be set as title.
         */
-        // added return 12/11
        public function SetTitle($value) {
          return $this->SetVariable('title', $value);
       }
@@ -51,39 +52,86 @@
         *
         * @param $value string to be set as title.
         */
-        // added eturn 12/11
        public function SetVariable($key, $value) {
           $this->data[$key] = $value;
           return $this;
       }
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------   
        /**
-        * Add a view as file to be included and optional variables.
-        *
-        * @param $file string path to the file to be included.
-        * @param vars array containing the variables that should be available for the included file.
-        */
-        
-       public function AddInclude($file, $variables=array()) {
-         $this->views[] = array('type' => 'include', 'file' => $file, 'variables' => $variables);
-         return $this;// new 11/11
+       * Add a view as file to be included and optional variables.
+       *
+       * @param $file string path to the file to be included.
+       * @param $vars array containing the variables that should be avilable for the included file.
+       * @param $region string the theme region, uses string 'default' as default region. NY
+       * @returns $this. 
+       */
+      public function AddInclude($file, $variables=array(), $region='default') {
+        $this->views[$region][] = array('type' => 'include', 'file' => $file, 'variables' => $variables);
+        return $this;
       }
+ //------------------------------------------------------------------------------     
+        /**
+       * Add text and optional variables.
+       *
+       * @param $string string content to be displayed.
+       * @param $vars array containing the variables that should be avilable for the included file.
+       * @param $region string the theme region, uses string 'default' as default region.
+       * @returns $this.
+       */
+      public function AddString($string, $variables=array(), $region='default') {
+        $this->views[$region][] = array('type' => 'string', 'string' => $string, 'variables' => $variables);
+        return $this;
+      }
+    
 //------------------------------------------------------------------------------
-
-       /**
-        * Render all views according to their type. 	
-        * (anropas från Themes/functions.php i  default.tpl.php)
-        */
-       public function Render() {
-         foreach($this->views as $view) {
+	      /**
+       * Render all views according to their type.
+       *
+       * @param $region string the region to render views for.
+       */
+      public function Render($region='default') {
+        if(!isset($this->views[$region])) return;
+        foreach($this->views[$region] as $view) {
           switch($view['type']) {
-            case 'include':
-              extract($view['variables']);
-              include($view['file']);
-              break;
+            case 'include': extract($view['variables']); include($view['file']); break;
+            case 'string':  extract($view['variables']); echo $view['string']; break;
           }
-         }
+        }
       }
-
-    }
+      
+//------------------------------------------------------------------------------      
+            /**
+       * Add inline style.
+       *
+       * @param $value string to be added as inline style.
+       * @returns $this.
+       */
+      public function AddStyle($value) {
+        if(isset($this->data['inline_style'])) {
+          $this->data['inline_style'] .= $value;
+        } else {
+          $this->data['inline_style'] = $value;
+        }
+        return $this;
+      }
+//------------------------------------------------------------------------------
+           /**
+       * Check if there exists views for a specific region.
+       *
+       * @param $region string/array the theme region(s).
+       * @returns boolean true if region has views, else false.
+       */
+      public function RegionHasView($region) {
+        if(is_array($region)) {
+          foreach($region as $val) {
+            if(isset($this->views[$val])) {
+              return true;
+            }
+          }
+          return false;
+        } else {
+          return(isset($this->views[$region]));
+        }
+      } 
+  }

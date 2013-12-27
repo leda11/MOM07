@@ -23,6 +23,7 @@
         //test id
         //echo $content['id']. ": Från CFormContent</br>";
         $save = isset($content['id']) ? 'save' : 'create';
+
         //test
         //echo "save-variabeln:". $save;
         $this->AddElement(new CFormElementHidden('id', array('value'=>$content['id'])))
@@ -31,8 +32,8 @@
              ->AddElement(new CFormElementTextarea('data', array('label'=>'Content:', 'value'=>$content['data'])))
              ->AddElement(new CFormElementText('type', array('value'=>$content['type'])))
              ->AddElement(new CFormElementText('filter', array('value'=>$content['filter'])))
-             ->AddElement(new CFormElementSubmit($save, array('callback'=>array($this, 'DoSave'), 'callback-args'=>array($content))));
-
+             ->AddElement(new CFormElementSubmit($save, array('callback'=>array($this, 'DoSave'), 'callback-args'=>array($content))) )
+             ->AddElement(new CFormElementSubmit('delete', array('callback'=>array($this, 'DoDelete'), 'callback-args'=>array($content))) );
         $this->SetValidation('title', array('not_empty'))
              ->SetValidation('key', array('not_empty'));
       }
@@ -50,6 +51,14 @@
         $content['filter']  = $form['filter']['value'];
         return $content->Save();
       }
-     
-     
+//-------------------------------------------------------------------------------     
+      /**
+       * Callback to delete the content.
+       */
+       //mom07 test
+      public function DoDelete($form, $content ) {
+      	$content['id'] = $form['id']['value'];
+      	$content->Delete();
+      	CHandy::Instance()->RedirectTo('content');	  
+      }
     }

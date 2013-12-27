@@ -22,14 +22,21 @@ class CRequest {
     }
   
   /**
-   * Init the object by parsing the current url request.
+   * Parse the current url request and divide it in controller, method and arguments.
+   *
+   * Calculates the base_url of the installation. Stores all useful details in $this.
+   *
+   * @param $baseUrl string use this as a hardcoded baseurl.
+   * @param $routing array key/val to use for routing if url matches key.
    */
-  public function Init($baseUrl = null) {
+  public function Init($baseUrl = null, $routing=null) {
     // Take current url and divide it in controller, method and arguments
     // hanteraar föjande länkar : 
     // 1./controller/method/arg1/arg2/arg3
     // 2. ToDo - index.php/controller/method/arg1/arg2/arg3
     // 3. ToDo - index.php?q=/controller/method/arg1/arg2/arg3
+    
+    //1..
     $requestUri  = $_SERVER['REQUEST_URI']; //ny 05
     $scriptPart = $scriptName  = $_SERVER['SCRIPT_NAME']; //ny 05
 
@@ -38,6 +45,7 @@ class CRequest {
       $scriptPart = dirname($scriptName);
     }
   
+    //2..
     // 9/11 
     // Compare REQUEST_URI and SCRIPT_NAME as long they match, leave the rest as current request.
     $i=0;
@@ -57,29 +65,42 @@ class CRequest {
       $query = trim($_POST['q']);
     }
     */
-
-    //9/11
-    // Remove the ?-part from the query when analysing controller/metod/arg1/arg2
+    
+    //3..
+    //9/11 Remove the ?-part from the query when analysing controller/metod/arg1/arg2
     $queryPos = strpos($request, '?');
     if($queryPos !== false) {
       $request = substr($request, 0, $queryPos);
     }
-    // 9/11 test tillaggt
-    // Check if request is empty and querystring link is set 
+    
+    //4..
+    // 9/11 test tillagg.  Check if request is empty and querystring link is set 
     if(empty($request) && isset($_GET['q'])) {
       $request = trim($_GET['q']);
     }
+    
+    //5..
+    // mom07 del 3 Check if url matches an entry in routing table
+    $routed_from=null;
+    if(is_array($routing) && isset($routing[$request]) && $routing[$request]['enabled']) {
+        $routed_from=$request;  
+    	$request = $routing[$request]['url'];
+    }
+    
+    //6..SPlit requests into its parts
     $splits = explode('/', $request);
         
    // $query =substr($request_uri, strlen(rtrim(dirname($scriptName), '/')));//ändrad (05)
     // 05 05 $splits = explode('/', trim($query, '/'));
-  
+    
+   //7..
     // Set controller, method and arguments
     $controller =  !empty($splits[0]) ? $splits[0] : 'index';
     $method       =  !empty($splits[1]) ? $splits[1] : 'index';
     $arguments = $splits;
     unset($arguments[0], $arguments[1]); // remove controller & method part from argument list
     
+    //8..
     // Prepare to create current_url and base_url (05)
     $currentUrl = $this->GetCurrentUrl();
     $parts        = parse_url($currentUrl);
@@ -90,6 +111,7 @@ class CRequest {
     $this->current_url  = $currentUrl;
     $this->request_uri = $requestUri; // (06)
     $this->script_name = $scriptName;
+    $this->routed_from 		= $routed_from; // mom(07-3)
     $this->request         = $request;
     $this->splits         = $splits;
     $this->controller     = $controller;
@@ -97,7 +119,7 @@ class CRequest {
     $this->arguments    = $arguments;
     // ....
   }
-  
+ //----------------------------------------------------------------------------------- 
    /**
    * Get the url to the current page. (05 fixa base_url)
    * Handle querys mom03 part 2

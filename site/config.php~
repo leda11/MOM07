@@ -95,12 +95,13 @@ $ha->config['controllers'] = array(
   'blog'   => array('enabled' => true, 'class' => 'CCBlog' ), 
   'page'   => array('enabled' => true, 'class' => 'CCPage' ), 
   'theme'   => array('enabled' => true, 'class' => 'CCTheme' ), 
+  'module'   => array('enabled' => true, 'class' => 'CCModules' ),
 );
 
 
 
 /**
-* Settings for the theme.
+* Settings for the theme.	
 */
 $ha->config['theme'] = array(
   // The name of the theme in the theme directory

@@ -96,27 +96,65 @@ $ha->config['controllers'] = array(
   'page'   => array('enabled' => true, 'class' => 'CCPage' ), 
   'theme'   => array('enabled' => true, 'class' => 'CCTheme' ), 
   'module'   => array('enabled' => true, 'class' => 'CCModules' ),
+  'my' => array('enabled' => true,'class' => 'CCMycontroller'),
 );
 
+/**
+* Define a routing table for urls.( updateCHandy::FrontController
+*
+* Route custom urls to a defined controller/method/arguments
+*/
+    $ha->config['routing'] = array(
+      'home' => array('enabled' => true, 'url' => 'index/index'),
+      
+    );
 
+   /**
+    * Define menus.
+    *
+    * Create hardcoded menus and map them to a theme region through $ha->config['theme'].
+    */
+    $ha->config['menus'] = array(
+      'navbar' => array(
+        'home'      => array('label' =>'Home','url'=>'home'),
+        'modules'   => array('label' =>'Modules','url'=>'module'),
+        'content'   => array('label' =>'Content','url'=>'content'),
+        'guestbook' => array('label' =>'Guestbook','url'=>'guestbook'),
+        'blog'      => array('label' =>'Blog','url'=>'blog'),
+      ),
+      'my-navbar' => array(
+      'home' => array('label'=>'About Me', 'url'=>'my'),
+      'blog' => array('label'=>'My Blog', 'url'=>'my/blog'),
+      'guestbook' => array('label'=>'Guestbook', 'url'=>'my/guestbook'),
+  ),
+ );    
+ 
+    
 
 /**
 * Settings for the theme.	
 */
 $ha->config['theme'] = array(
   // The name of the theme in the theme directory
+  'path'       => 'site/themes/mytheme',
+  //'path'    => 'themes/grid',
+   'parent'    => 'themes/grid',
   //'name'    => 'core',
-   'name' => 'grid',
-   'stylesheet'  => 'style.php',   // Main stylesheet to include in template files when prooduction piont to style.css
+   //'name'     => 'grid',
+   //'stylesheet'  => 'style.php',   // Main stylesheet to include in template files when prooduction piont to style.css
+   'stylesheet' => 'style.css',
    'template_file'   => 'index.tpl.php',   // Default template file, else use default.tpl.php
+   
    // A list of valid theme regions
-  'regions' => array('flash','featured-first','featured-middle','featured-last',
+   'regions' => array('navbar','flash','featured-first','featured-middle','featured-last',
     'primary','sidebar','triptych-first','triptych-middle','triptych-last',
     'footer-column-one','footer-column-two','footer-column-three','footer-column-four',
     'footer',
     ),
+   
+   'menu_to_region' => array('navbar'=>'navbar'), 
    // Add static entries for use in the template file.
-      'data' => array(
+     'data' => array(
         'header' => 'Handy',
         'slogan' => 'A PHP-based MVC-inspired CMF',
         'favicon' => 'logo_80x80.png',
@@ -127,6 +165,48 @@ $ha->config['theme'] = array(
       ),
 );
 
-
-
+    /**
+    * Settings for the theme. The theme may have a parent theme.
+    *
+    * When a parent theme is used the parent's functions.php will be included before the current
+    * theme's functions.php. The parent stylesheet can be included in the current stylesheet
+    * by an @import clause. See site/themes/mytheme for an example of a child/parent theme.
+    * Template files can reside in the parent or current theme, the CHandy::ThemeEngineRender()
+    * looks for the template-file in the current theme first, then it looks in the parent theme.
+    *
+    * There are two useful theme helpers defined in themes/functions.php.
+    *  theme_url($url): Prepends the current theme url to $url to make an absolute url.
+    *  theme_parent_url($url): Prepends the parent theme url to $url to make an absolute url.
+    *
+    * path: Path to current theme, relativly HANDY_INSTALL_PATH, for example themes/grid or site/themes/mytheme.
+    * parent: Path to parent theme, same structure as 'path'. Can be left out or set to null.
+    * stylesheet: The stylesheet to include, always part of the current theme, use @import to include the parent stylesheet.
+    * template_file: Set the default template file, defaults to default.tpl.php.
+    * regions: Array with all regions that the theme supports.
+    * data: Array with data that is made available to the template file as variables.
+    *
+    * The name of the stylesheet is also appended to the data-array, as 'stylesheet' and made
+    * available to the template files.
+    */
+/*    $ha->config['theme'] = array(
+      'path'            => 'site/themes/mytheme',
+      'parent'          => 'themes/grid',
+      'stylesheet'      => 'style.css',
+      'template_file'   => 'index.tpl.php',
+      'regions' => array('flash','featured-first','featured-middle','featured-last',
+        'primary','sidebar','triptych-first','triptych-middle','triptych-last',
+        'footer-column-one','footer-column-two','footer-column-three','footer-column-four',
+        'footer',
+      ),
+      'data' => array(
+        'header' => 'Lydia',
+        'slogan' => 'A PHP-based MVC-inspired CMF',
+        'favicon' => 'logo_80x80.png',
+        'logo' => 'logo_80x80.png',
+        'logo_width'  => 80,
+        'logo_height' => 80,
+        'footer' => '<p>Lydia &copy; by Mikael Roos (mos@dbwebb.se)</p>',
+      ),
+    );
+*/
 

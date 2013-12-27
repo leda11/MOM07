@@ -4,22 +4,48 @@
 * This file is included right before the themes own functions.php
 */
 
+function get_tools(){
+	global $ha;
+return <<<EOD
+<p>&copy; Handy: by Lena Dackhammar </p>
+<p>Tools: 
+<a href="http://validator.w3.org/check/referer">html5</a>
+<a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">css3</a>
+<a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css21">css21</a>
+<a href="http://validator.w3.org/unicorn/check?ucn_uri=referer&amp;ucn_task=conformance">unicorn</a>
+<a href="http://validator.w3.org/checklink?uri={$ha->request->current_url}">links</a>
+<a href="http://qa-dev.w3.org/i18n-checker/index?async=false&amp;docAddr={$ha->request->current_url}">i18n</a>
+<!-- <a href="link?">http-header</a> -->
+<a href="http://csslint.net/">css-lint</a>
+<a href="http://jslint.com/">js-lint</a>
+<a href="http://jsperf.com/">js-perf</a>
+<a href="http://www.workwithcolor.com/hsl-color-schemer-01.htm">colors</a>
+<a href="http://dbwebb.se/style">style</a>
+<br/>
+Docs:
+<a href="http://www.w3.org/2009/cheatsheet">cheatsheet</a>
+<a href="http://dev.w3.org/html5/spec/spec.html">html5</a>
+<a href="http://www.w3.org/TR/CSS2">css2</a>
+<a href="http://www.w3.org/Style/CSS/current-work#CSS3">css3</a>
+<a href="http://php.net/manual/en/index.php">php</a>
+<a href="http://www.sqlite.org/lang.html">sqlite</a>
+<a href="http://www.blueprintcss.org/">blueprint</a>
+</p>
+<hr>
+EOD;
+}
 function login_menu(){
 	$ha = CHandy::instance();
 	if( $ha->user->IsAuthenticated()){
-		// skapa gravatar
-	
-		//skapa en länk som triggar en utloggning -lagra i en variabel
+		// skapa gravatar	
 		$logstatus = "<a href='" . create_url('user/profile') . "'><img class='gravatar' src='" . get_gravatar(20) . "' alt='user gravatar'> " . $ha->user['acronym'] . "</a> ";
-		
+		//skapa en länk som triggar en utloggning -lagra i en variabel
 		if($ha->user->IsAdministrator()){
 			$logstatus.= "<a href='" . create_url('acp') . "'>acp</a> ";	
 		}	
-		$logstatus .= "Du är inloggad <a href='" . create_url('user/logout') . "'>Logout</a>" ;
-		
+		$logstatus .= "Du är inloggad <a href='" . create_url('user/logout') . "'>Logout</a>" ;		
 	}else{
 		$logstatus = "Logga in <a href='" . create_url('user/login') . "'>login</a> ";
-
 	}
 	return $logstatus;
 }
@@ -43,7 +69,7 @@ function base_url($url=null) {
 */
 
 function create_url($urlOrController=null, $method=null, $arguments=null) {
-  return CHandy::Instance()->request->CreateUrl($urlOrController, $method, $arguments);
+    return CHandy::Instance()->request->CreateUrl($urlOrController, $method, $arguments);
 }
 
 //-----------------------------------------------------------------------------
@@ -51,31 +77,38 @@ function create_url($urlOrController=null, $method=null, $arguments=null) {
 /**
 * Prepend the theme_url, which is the url to the current theme directory.
 */
-
 	function theme_url($url) {
-		$Ha = CHandy::Instance();
+		$ha = CHandy::Instance();
 		return "{$ha->request->base_url}themes/{$ha->config['theme']['name']}/{$url}";
 	}
 //-----------------------------------------------------------------------------  
-  
+    /**
+    * Check if region has views. Accepts variable amount of arguments as regions.
+    *
+    * @param $region string the region to draw the content in.
+    */
+    function region_has_content($region='default' /*...*/) {
+      return CHandy::Instance()->views->RegionHasView(func_get_args());
+    }  
+    
+ //-----------------------------------------------------------------------------
 /**
 * Return the current url.
 */
-
 	function current_url() {
 		return CHandy::Instance()->request->current_url;
 	}    
  
 //-----------------------------------------------------------------------------    
-
-/**
+	    /**
     * Render all views.
+    *
+    * @param $region string the region to draw the content in.
     */
-    function render_views() {
-    	
-      return CHandy::Instance()->views->Render();
-      
+    function render_views($region='default') {
+      return CHandy::Instance()->views->Render($region);
     }
+    
 //-----------------------------------------------------------------------------    
 
 /**

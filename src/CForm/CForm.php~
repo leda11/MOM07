@@ -24,7 +24,7 @@
         $this['name'] = $name;
         // new in content part
         if(is_callable('CHandy::Instance()')) {
-        	$this->characterEncoding = CLydia::Instance()->config['character_encoding'];
+        	$this->characterEncoding = CHandy::Instance()->config['character_encoding'];
         } else {
         	$this->characterEncoding = 'UTF-8';
         }
@@ -69,15 +69,17 @@
         $value = $this['value'];
         foreach($rules as $key => $val) {
           $rule = is_numeric($key) ? $val : $key;
-          
-        /*  if(!isset($tests[$rule])) throw new Exception("Validation of form element failed, no such validation rule exists. $rule");
+         //Denna if satesvar bortkommenterad innen 
+          if(!isset($tests[$rule])) throw new Exception("Validation of form element failed, no such validation rule exists. $rule");
           if(eval($tests[$rule]['test']) === false) {
-            $messages[] = $tests[$rule]['message']; // meddelande som kommer under fromelementet
+            $messages[] = $tests[$rule]['message']; // meddelande som kommer under formelementet
             $pass = false;
           }
-        }*/
+        }
         // from CForm
-       if(!isset($tests[$rule])) throw new Exception("Validation of form element failed, no such validation rule exists: $rule");
+   
+        /* kommenterat bort för att testa om textarea blir rätt
+        if(!isset($tests[$rule])) throw new Exception("Validation of form element failed, no such validation rule exists: $rule");
        		$arg = is_numeric($key) ? null : $val;
 
        		$test = ($rule == 'custom_test') ? $arg : $tests[$rule];
@@ -93,7 +95,7 @@
         $pass = false;
         }
     }
-        
+*/
         
         if(!empty($messages)) 
         	$this['validation_messages'] = $messages;
@@ -108,7 +110,7 @@
        */
       public function GetHTML() {
         $id = isset($this['id']) ? $this['id'] : 'form-element-' . $this['name'];
-        $class = isset($this['class']) ? " class='{$this['class']}'" : null;
+        $class = isset($this['class']) ? "{$this['class']}" : null;
         
         //new validating
         $validates = (isset($this['validation-pass']) && $this['validation-pass'] === false) ? ' validation-failed' : null;
@@ -136,7 +138,7 @@
          }
          //fix viewing
         if($type && $this['type'] == 'submit') {
-        	return "<p><input id='$id'{$type}{$class}{$name}{$value}{$autofocus}{$readonly} />{$messages}</p>\n";   
+        	return "<p><input id='$id'{$type}{$class}{$name}{$value}{$autofocus}{$readonly} /></p>\n";   
         } else if($type && $this['type'] == 'textarea') {
          	 return "<p><label for='$id'>$label</label><br><textarea id='$id'{$type}{$class}{$name}{$autofocus}{$readonly}>{$onlyValue}</textarea></p>\n";
          } else if($type && $this['type'] == 'hidden') {
@@ -193,7 +195,7 @@
       public function __construct($name, $attributes=array()) {
         parent::__construct($name, $attributes);
         $this['type'] = 'hidden';
-        $this->UseNameAsDefaultLabel();
+        //$this->UseNameAsDefaultLabel();
       }
     }
 //==============================================================================    
@@ -295,6 +297,10 @@
        * @returns string with HTML for the form.
        */
       public function GetHTML($attributes=null) {
+      	// denna ifsats hade MOS men inte jag
+      	if(is_array($attributes)) {
+      		$this->form = array_merge($this->form, $attributes);
+      	}
         $id     = isset($this->form['id'])    ? " id='{$this->form['id']}'" : null;
         $class  = isset($this->form['class']) ? " class='{$this->form['class']}'" : null;
         $name   = isset($this->form['name'])  ? " name='{$this->form['name']}'" : null;
@@ -352,7 +358,7 @@ EOD;
     }
     return $submitted;
   }
-
+ //finns inte i MOS -används inte mer verkar det som
   
 //-----------------------------------------------------------------------------  
 /**
